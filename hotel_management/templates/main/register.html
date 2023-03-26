@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} Register {% endblock %}
+
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Registration Page</h1>
+
+        {% if request.user.is_active %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="row mt-4">
+                    <div class="col-md-5 border p-4">
+                        <p>{{ register_form.uname|as_crispy_field }}</p>
+                        <p>{{ register_form.password|as_crispy_field }}</p>
+                        <p>{{ register_form.email_address|as_crispy_field }}</p>
+                        <p>{{ register_form.phoneNumber|as_crispy_field }}</p>
+                        <div class="my-2"><small class="text-muted">Already have an account? <a href="{% url 'hms:login' %}">login</a></small></div>
+                        <button type="submit" class="btn btn-primary btn-sm">Register</button>
+                    </div>
+                </div>
+            </form>
+        {% endif %}
+
+
+    </div>
+{% endblock %}

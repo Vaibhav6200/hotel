@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} Booking {% endblock %}
+
+
+{% block content %}
+    <div class="container mt-5">
+        <h1>Booking Page</h1>
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+                <div class="row mt-4">
+                    <div class="col-md-5 border p-4">
+                        <p>{{ form.room_type|as_crispy_field }}</p>
+                        <p>{{ form.bed_type|as_crispy_field }}</p>
+                        <p>{{ form.check_in_date|as_crispy_field }}</p>
+                        <p>{{ form.check_out_date|as_crispy_field }}</p>
+                        <button type='submit' name="show_available_room" id="show_available_room" class="btn btn-primary btn-sm">Show Available Rooms</button>
+                        <button type="submit" name="book_now" id="book_now" class="btn btn-primary btn-sm">Book Now</button>
+                    </div>
+                </div>
+        </form>
+
+        {% if show_table %}
+        <div class="my-5">
+            <h1>Available Rooms</h1>
+            <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Room No</th>
+                    <th>Room Type</th>
+                    <th>Beds</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for room in available_rooms %}
+                    <tr>
+                      <td>{{ room.room_no }}</td>
+                      <td>{{ room.room_type }}</td>
+                      <td>{{ room.beds }}</td>
+                      <td>{{ room.price }}</td>
+                      <td>{{ room.room_status }}</td>
+                    </tr>
+                  {% empty %}
+                    <tr>
+                      <td colspan="6">No rooms available for the selected dates.</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+        </div>
+        {% endif %}
+
+    </div>
+{% endblock %}
