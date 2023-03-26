@@ -33,7 +33,7 @@ class LoginForm(forms.Form):
     uname = forms.CharField(
         label="Username", min_length=3, max_length=20, required=True,
         validators=[RegexValidator(r"^[a-zA-ZÀ-ÿ\s]*$", message="Only Letters allowed !")],
-        widget=forms.TextInput(attrs={'class': 'form-control-sm', 'name': 'username', 'id': 'username'})
+        widget=forms.TextInput(attrs={'class': 'form-control-sm'})
     )
 
     password = forms.CharField(

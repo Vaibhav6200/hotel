@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import *
 from .models import *
+from django.contrib import messages
 
 
 
@@ -101,11 +102,9 @@ def index(request):
 
 
         if check_in_date < timezone.now().date():
-            pass
-            # raise forms.ValidationError("The check-in date cannot be in the past.")
+            messages.error(request, "Check In date cannot be in the Past")
         elif check_out_date < check_in_date:
-            pass
-            # raise forms.ValidationError("The check-out date must be after the check-in date.")
+            messages.error(request, "The check-out date must be after the check-in date")
 
         else:
             available_rooms = find_available_room(room_type, check_in_date, check_out_date, no_of_beds)
@@ -118,11 +117,6 @@ def index(request):
 
     return render(request, 'main/index.html')
 
-
-# AUTHORIZATION AND AUTHENTICATION
-@login_required
-def dashboard(request):
-    return render(request, 'main/dashboard.html')
 
 
 def register(request):
@@ -142,24 +136,23 @@ def register(request):
     return render(request, 'main/register.html', {'register_form': register_form})
 
 
-def login(request):
-    # Check if the user is already authenticated
-    if request.user.is_authenticated:
-        return redirect('hms:index')
-
-    login_form = None
+def login_user(request):
     if request.method == 'POST':
         login_form = LoginForm(request.POST)
         if login_form.is_valid():
-            username = login_form.cleaned_data['username']
-            password = login_form.cleaned_data['password']
+            username = login_form.cleaned_data.get('uname')
+            password = login_form.cleaned_data.get('password')
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('hms:index')
             else:
-                # If the user is not authenticated, add an error message to the form and render the template again
-                login_form.add_error(None, 'Invalid username or password')
+                messages.error(request, "Invalid Credentials")
     else:
         login_form = LoginForm()
     return render(request, 'main/login.html', {'login_form': login_form})
+
+
+def logout_user(request):
+    logout(request)
+    return redirect('hms:index')

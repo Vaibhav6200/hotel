@@ -53,10 +53,12 @@
                                         <i class="icon_star-half_alt"></i>
                                     </div>
 
+                                    {% if user.is_authenticated %}
                                     <form action="{% url 'hms:room_detail' room_id %}" method="post" id="myForm">
                                         {% csrf_token %}
                                         <a id="book_now">Booking Now</a>
                                     </form>
+                                    {% endif %}
 
 
                                 </div>
@@ -190,7 +192,7 @@
                                     <option value="3">Tripe Room</option>
                                 </select>
                             </div>
-                            <button type="submit">Book Now</button>
+                            <button type="submit">Check Availability</button>
                         </form>
 
                     </div>

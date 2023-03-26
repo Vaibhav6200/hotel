@@ -61,7 +61,10 @@
                           <form method="post" action="{% url 'hms:rooms' %}">
                             {% csrf_token %}
                             <input type="hidden" name="room_id" value="{{room.id}}">
-                            <button type="submit" class="btn btn-warning" >Book Now</button>
+
+                            {% if user.is_authenticated %}
+                              <button type="submit" class="btn btn-warning" >Book Now</button>
+                            {% endif %}
                             <a class="btn btn-primary" href="{% url 'hms:room_detail' room.id %}">View</a>
                           </form>
                         </div>

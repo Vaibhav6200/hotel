@@ -6,23 +6,22 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1>Login</h1>
 
-        {% if request.user.is_active %}
-            <form method="post">
-                {% csrf_token %}
-                <div class="row mt-4">
-                    <div class="col-md-5 border p-4">
-                        <p>{{ login_form.uname|as_crispy_field }}</p>
-                        <p>{{ login_form.password|as_crispy_field }}</p>
-                        <div class="my-2"><small class="text-muted">Don't have an account? <a href="{% url 'hms:register' %}">register</a></small></div>
+        <h2 class="mb-2">Login</h2>
 
-                        <button type="submit" class="btn btn-primary btn-sm">Login</button>
-                    </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row mt-4">
+                <div class="col-md-5 border p-4">
+                    <p>{{ login_form.uname|as_crispy_field }}</p>
+                    <p>{{ login_form.password|as_crispy_field }}</p>
+                    <div class="my-2"><small class="text-muted">Don't have an account? <a href="{% url 'hms:register' %}">register</a></small></div>
+
+                    {% include 'includes/messages.html' %}
+                    <button type="submit" class="btn btn-primary btn-sm">Login</button>
                 </div>
-            </form>
-        {% endif %}
-
+            </div>
+        </form>
 
     </div>
 {% endblock %}
