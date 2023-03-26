@@ -42,7 +42,7 @@ class Room(models.Model):
     updated_at = models.DateTimeField(auto_now=True, null=True)
 
     def __str__(self):
-        return f"Room {self.room_no} price: {self.price} is currently {self.room_status}"
+        return f"Room {self.room_no} price: {self.price} "
 
 
 class Booking(models.Model):

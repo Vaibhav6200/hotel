@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
@@ -7,24 +7,63 @@ from .forms import *
 from .models import *
 
 
-def index(request):
-    return render(request, 'main/index.html')
+
+def booking(user, room_id, check_in_date, check_out_date):
+        room = Room.objects.get(id=room_id)
+
+        booking = Booking.objects.create(
+            room=room,
+            user = user,
+            check_in_date=check_in_date,
+            check_out_date=check_out_date
+        )
+        booking.save()
+
 
 
 def our_rooms(request):
+    if request.method == 'POST':
+        user = request.user
+        room_id = request.POST.get('room_id')
+        check_in_date_string = request.session.get('check_in_date')
+        check_out_date_string = request.session.get('check_out_date')
+
+        check_in_date = datetime.strptime(check_in_date_string, '%d %B, %Y').date()
+        check_out_date = datetime.strptime(check_out_date_string, '%d %B, %Y').date()
+
+        booking(user, room_id, check_in_date, check_out_date)
+        return redirect('hms:index')
+
     return render(request, 'main/rooms.html')
 
 
-def room_detail(request):
-    return render(request, 'main/room_detail.html')
+def room_detail(request, room_id):
+    room = Room.objects.get(id=room_id)
+    # request.session['room_id'] = room_id
+
+    # Extracting Details and Booking Room
+    if request.method == "POST":
+        user = request.user
+        check_in_date_string = request.session.get('check_in_date')
+        check_out_date_string = request.session.get('check_out_date')
+        check_in_date = datetime.strptime(check_in_date_string, '%d %B, %Y').date()
+        check_out_date = datetime.strptime(check_out_date_string, '%d %B, %Y').date()
+
+        booking(user, room_id, check_in_date, check_out_date)
+        return redirect('hms:index')
+
+    return render(request, 'main/room_detail.html', {'room': room, 'room_id': room_id})
+
+
+def about(request):
+    return render(request, 'main/about.html')
+
 
 
 def contact(request):
     return render(request, 'main/contact.html')
 
 
-def about(request):
-    return render(request, 'main/about.html')
 
 
 def find_available_room(room_type, check_in_date, check_out_date, beds):
@@ -47,55 +86,37 @@ def find_available_room(room_type, check_in_date, check_out_date, beds):
     return available_rooms
 
 
-# @login_required
-def booking(request):
-
+def index(request):
     data = {}
-    show_table = False
-
     if request.method == 'POST':
-        form = BookingForm(request.POST)
 
-        if form.is_valid():
-            user_id = request.user.id
-            room_type = form.cleaned_data.get('room_type')
-            bed_type = form.cleaned_data.get('bed_type')
-            check_in_date = form.cleaned_data['check_in_date']
-            check_out_date = form.cleaned_data['check_out_date']
+        checkin_string = request.POST['check_in_date']
+        check_in_date = datetime.strptime(checkin_string, '%d %B, %Y').date()
 
-            available_rooms = find_available_room(room_type, check_in_date, check_out_date, bed_type)
+        checkout_string = request.POST['check_out_date']
+        check_out_date = datetime.strptime(checkout_string, '%d %B, %Y').date()
 
-            if 'show_available_room' in request.POST:
-                show_table = True
-                data['available_rooms'] = available_rooms
+        room_type = request.POST['room_type']
+        no_of_beds = request.POST.get('no_of_beds')
 
-            elif 'book_now' in request.POST:
-                if available_rooms:
-                    available_rooms= available_rooms[0]
-                    # Since Room is available to create Booking
-                    room_id = available_rooms.id
-                    room = Room.objects.get(id=room_id)
-                    myUser = User.objects.get(id=user_id)
 
-                    booking = Booking.objects.create(
-                        room=room,
-                        user = myUser,
-                        check_in_date=check_in_date,
-                        check_out_date=check_out_date
-                    )
-                    booking.save()
-                    return redirect('hms:dashboard')
+        if check_in_date < timezone.now().date():
+            pass
+            # raise forms.ValidationError("The check-in date cannot be in the past.")
+        elif check_out_date < check_in_date:
+            pass
+            # raise forms.ValidationError("The check-out date must be after the check-in date.")
 
-                else:
-                    print('\nNo Rooms Available\n')
-    else:
-        form = BookingForm()
+        else:
+            available_rooms = find_available_room(room_type, check_in_date, check_out_date, no_of_beds)
+            data['available_rooms'] = available_rooms
 
-    data['form'] = form
-    data['show_table'] = show_table
+            request.session['check_in_date'] = checkin_string
+            request.session['check_out_date'] = checkout_string
 
-    return render(request, 'main/booking.html', data)
+            return render(request, 'main/rooms.html', data)
 
+    return render(request, 'main/index.html')
 
 
 # AUTHORIZATION AND AUTHENTICATION

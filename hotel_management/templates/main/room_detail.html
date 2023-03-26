@@ -32,9 +32,11 @@
     </div>
     <!-- Breadcrumb Section End -->
 
+
     <!-- Room Details Section Begin -->
     <section class="room-details-section spad">
         <div class="container">
+
             <div class="row">
                 <div class="col-lg-8">
                     <div class="room-details-item">
@@ -50,23 +52,29 @@
                                         <i class="icon_star"></i>
                                         <i class="icon_star-half_alt"></i>
                                     </div>
-                                    <a href="#">Booking Now</a>
+
+                                    <form action="{% url 'hms:room_detail' room_id %}" method="post" id="myForm">
+                                        {% csrf_token %}
+                                        <a id="book_now">Booking Now</a>
+                                    </form>
+
+
                                 </div>
                             </div>
-                            <h2>159$<span>/Pernight</span></h2>
+                            <h2>Rs {{room.price}}<span> /per-night</span></h2>
                             <table>
                                 <tbody>
                                     <tr>
-                                        <td class="r-o">Size:</td>
-                                        <td>30 ft</td>
+                                        <td class="r-o">Room No:</td>
+                                        <td>{{room.room_no}}</td>
                                     </tr>
                                     <tr>
-                                        <td class="r-o">Capacity:</td>
-                                        <td>Max persion 5</td>
+                                        <td class="r-o">Room Type:</td>
+                                        <td>{{room.room_type|upper}}</td>
                                     </tr>
                                     <tr>
                                         <td class="r-o">Bed:</td>
-                                        <td>King Beds</td>
+                                        <td>{{ room.beds }}</td>
                                     </tr>
                                     <tr>
                                         <td class="r-o">Services:</td>
@@ -74,17 +82,8 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p class="f-para">Motorhome or Trailer that is the question for you. Here are some of the
-                                advantages and disadvantages of both, so you will be confident when purchasing an RV.
-                                When comparing Rvs, a motorhome or a travel trailer, should you buy a motorhome or fifth
-                                wheeler? The advantages and disadvantages of both are studied so that you can make your
-                                choice wisely when purchasing an RV. Possessing a motorhome or fifth wheel is an
-                                achievement of a lifetime. It can be similar to sojourning with your residence as you
-                                search the various sites of our great land, America.</p>
-                            <p>The two commonly known recreational vehicle classes are the motorized and towable.
-                                Towable rvs are the travel trailers and the fifth wheel. The rv travel trailer or fifth
-                                wheel has the attraction of getting towed by a pickup or a car, thus giving the
-                                adaptability of possessing transportation for you when you are parked at your campsite.
+                            <p class="f-para">
+                                {{room.description}}
                             </p>
                         </div>
                     </div>
@@ -157,36 +156,46 @@
                         </form>
                     </div>
                 </div>
+
+
                 <div class="col-lg-4">
                     <div class="room-booking">
                         <h3>Your Reservation</h3>
-                        <form action="#">
+
+                        <form action="{% url 'hms:index' %}" method="post">
+                            {% csrf_token %}
                             <div class="check-date">
                                 <label for="date-in">Check In:</label>
-                                <input type="text" class="date-input" id="date-in">
+                                <input type="text" class="date-input" name="check_in_date" id="date-in" required>
                                 <i class="icon_calendar"></i>
                             </div>
                             <div class="check-date">
                                 <label for="date-out">Check Out:</label>
-                                <input type="text" class="date-input" id="date-out">
+                                <input type="text" class="date-input" name="check_out_date" id="date-out" required>
                                 <i class="icon_calendar"></i>
                             </div>
                             <div class="select-option">
-                                <label for="guest">Guests:</label>
-                                <select id="guest">
-                                    <option value="">3 Adults</option>
+                                <label for="guest">Room Type:</label>
+                                <select id="guest" name="room_type" required>
+                                    <option value="ac">AC</option>
+                                    <option value="nonac">Non AC</option>
                                 </select>
                             </div>
                             <div class="select-option">
-                                <label for="room">Room:</label>
-                                <select id="room">
-                                    <option value="">1 Room</option>
+                                <label for="room">Bed:</label>
+                                <select id="room" name="no_of_beds">
+                                    <option value="0">Select an Option</option>
+                                    <option value="1">Single bed</option>
+                                    <option value="2">Double Room</option>
+                                    <option value="3">Tripe Room</option>
                                 </select>
                             </div>
-                            <button type="submit">Check Availability</button>
+                            <button type="submit">Book Now</button>
                         </form>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
@@ -194,4 +203,15 @@
 
 {% include 'includes/footer.html' %}
 
+{% endblock %}
+
+
+{% block extra_js %}
+    <script>
+        book_now = document.querySelector('#book_now')
+        myForm = document.querySelector('#myForm')
+        book_now.addEventListener('click', ()=>{
+            myForm.submit();
+        })
+    </script>
 {% endblock %}
