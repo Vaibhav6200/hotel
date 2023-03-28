@@ -7,13 +7,11 @@ from django.contrib.auth.models import User
 
 # class CustomUser(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     email = models.EmailField(max_length=100)
-#     phone_number = models.CharField(max_length=20)
 #     otp_code = models.CharField(max_length=6, unique=True, null=True)
 #     email_verified = models.BooleanField(default=False)
 
 #     def __str__(self):
-#         return self.email
+#         return self.user.username
 
 
 class Room(models.Model):

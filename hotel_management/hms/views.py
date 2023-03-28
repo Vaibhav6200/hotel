@@ -77,8 +77,8 @@ def find_available_room(room_type, check_in_date, check_out_date, beds):
 
     # filters out all the rooms that are already booked between the check_in_date and check_out_date selected by the user.
     overlapping_bookings = Booking.objects.filter(
-        check_in_date__lte=check_out_date,
-        check_out_date__gte=check_in_date
+        check_in_date__lt=check_out_date,
+        check_out_date__gt=check_in_date
     )
     booked_rooms = [booking.room for booking in overlapping_bookings]
     available_rooms = available_rooms.exclude(pk__in=[room.pk for room in booked_rooms])
