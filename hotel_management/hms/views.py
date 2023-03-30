@@ -56,24 +56,39 @@ def our_rooms(request):
 def room_detail(request, room_id):
     room = Room.objects.get(id=room_id)
 
+    comments = Comment.objects.filter(room=room)
+
     # Extracting Details and Booking Room
     if request.method == "POST":
-        user = request.user
-        check_in_date_string = request.session.get('check_in_date')
-        check_out_date_string = request.session.get('check_out_date')
-        check_in_date = datetime.strptime(check_in_date_string, '%d %B, %Y').date()
-        check_out_date = datetime.strptime(check_out_date_string, '%d %B, %Y').date()
-
-        flag = booking(user, room_id, check_in_date, check_out_date)
-        if flag:
-            messages.success(request, "Booking Successfull")
-        else:
-            messages.error(request, "Opps! there is some Error while Booking your Room")
+        if 'comment_button' in request.POST:
+            email = request.POST.get('email')
+            message = request.POST.get('message')
+            comment = Comment(user=request.user, room=room, email=email, comment=message)
+            comment.save()
 
 
-        return redirect('hms:dashboard')
+        elif 'book_now_button' in request.POST:
+            user = request.user
+            check_in_date_string = request.session.get('check_in_date')
+            check_out_date_string = request.session.get('check_out_date')
+            check_in_date = datetime.strptime(check_in_date_string, '%d %B, %Y').date()
+            check_out_date = datetime.strptime(check_out_date_string, '%d %B, %Y').date()
 
-    return render(request, 'main/room_detail.html', {'room': room, 'room_id': room_id})
+            flag = booking(user, room_id, check_in_date, check_out_date)
+            if flag:
+                messages.success(request, "Booking Successfull")
+            else:
+                messages.error(request, "Opps! there is some Error while Booking your Room")
+
+            return redirect('hms:dashboard')
+
+    data = {
+        'room': room,
+        'room_id': room_id,
+        'comments': comments,
+    }
+
+    return render(request, 'main/room_detail.html', data)
 
 
 def find_available_room(room_type, check_in_date, check_out_date, beds):

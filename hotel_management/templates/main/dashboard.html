@@ -61,6 +61,7 @@
                       <td>{{ booking.check_out_date }}</td>
                       <td>{{ booking.room.price }}</td>
                       <td><a class="btn btn-primary" href="{% url 'hms:room_detail' booking.room.id %}">View Your Room</a></td>
+                      <!-- <td><a class="btn btn-danger" href="{% url 'hms:room_detail' booking.room.id %}">Cancel Booking</a></td> -->
                       <td><a class="btn btn-danger" href="#">Cancel Booking</a></td>
                     </tr>
                   {% empty %}
