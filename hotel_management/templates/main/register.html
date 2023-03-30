@@ -8,21 +8,19 @@
     <div class="container mt-5 py-4">
         <h2>Registration Page</h2>
 
-        {% if request.user.is_active %}
-            <form method="post">
-                {% csrf_token %}
-                <div class="row mt-4">
-                    <div class="col-md-5 border p-4">
-                        <p>{{ register_form.uname|as_crispy_field }}</p>
-                        <p>{{ register_form.password|as_crispy_field }}</p>
-                        <p>{{ register_form.email_address|as_crispy_field }}</p>
-                        <p>{{ register_form.phoneNumber|as_crispy_field }}</p>
-                        <div class="my-2"><small class="text-muted">Already have an account? <a href="{% url 'hms:login' %}">login</a></small></div>
-                        <button type="submit" class="btn btn-warning btn-sm">Register</button>
-                    </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="row mt-4">
+                <div class="col-md-5 border p-4">
+                    <p>{{ register_form.username|as_crispy_field }}</p>
+                    <p>{{ register_form.email|as_crispy_field }}</p>
+                    <p>{{ register_form.password1|as_crispy_field }}</p>
+                    <p>{{ register_form.password2|as_crispy_field }}</p>
+                    <div class="my-2"><small class="text-muted">Already have an account? <a href="{% url 'hms:login' %}">login</a></small></div>
+                    <button type="submit" class="btn btn-warning btn-sm">Register</button>
                 </div>
-            </form>
-        {% endif %}
+            </div>
+        </form>
 
 
     </div>

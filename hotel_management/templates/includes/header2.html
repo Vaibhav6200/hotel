@@ -18,6 +18,16 @@
                                 <a href="#"><i class="fa fa-tripadvisor"></i></a>
                                 <a href="#"><i class="fa fa-instagram"></i></a>
                             </div>
+                            <div class="language-option mr-5">
+                                <img src="{% static 'img/flag.jpg' %}" alt="">
+                                <span>EN <i class="fa fa-angle-down"></i></span>
+                                <div class="flag-dropdown">
+                                    <ul>
+                                        <li><a href="#">English</a></li>
+                                        <li><a href="#">Hindi</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                             {% if user.is_authenticated  %}
                                 <a href="{% url 'hms:logout_user' %}" class="btn btn-outline-warning">Logout</a>
                             {% else %}
@@ -44,7 +54,10 @@
                             <nav class="mainmenu">
                                 <ul>
                                     <li class="active"><a href="{% url 'hms:index' %}">Home</a></li>
-                                    <!-- <li><a href="{% url 'hms:rooms' %}">Rooms</a></li> -->
+                                    <li><a href="{% url 'hms:allrooms' %}">Our Rooms</a></li>
+                                    {% if user.is_authenticated  %}
+                                        <li><a href="{% url 'hms:dashboard' %}">My Bookings</a></li>
+                                    {% endif  %}
                                     <li><a href="{% url 'hms:about' %}">About Us</a></li>
                                     <li><a href="{% url 'hms:contact' %}">Contact</a></li>
                                 </ul>
